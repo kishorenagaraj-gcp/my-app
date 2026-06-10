@@ -14,4 +14,3 @@ steps:
 
 images:
 - 'asia-south1-docker.pkg.dev/my-test-project-499003/tic-tac-toe-repo/tic-app'
-``
