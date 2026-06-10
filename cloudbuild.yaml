@@ -1,0 +1,17 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'asia-south1-docker.pkg.dev/my-test-project-499003/tic-tac-toe-repo/tic-app',
+    '.'
+  ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push',
+    'asia-south1-docker.pkg.dev/my-test-project-499003/tic-tac-toe-repo/tic-app'
+  ]
+
+images:
+- 'asia-south1-docker.pkg.dev/my-test-project-499003/tic-tac-toe-repo/tic-app'
+``
