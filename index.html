@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Tic Tac Toe</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.4s;
+    }
+
+    /* LIGHT & DARK THEMES */
+    body.light {
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+        color: black;
+    }
+
+    body.dark {
+        background: linear-gradient(135deg, #141e30, #243b55);
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+        padding: 25px;
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    #status {
+        margin: 10px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    #board {
+        display: grid;
+        grid-template-columns: repeat(3, 90px);
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .cell {
+        width: 90px;
+        height: 90px;
+        font-size: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 15px;
+        transition: 0.3s;
+        background: rgba(255,255,255,0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .cell:hover {
+        transform: scale(1.1);
+        background: rgba(255,255,255,0.6);
+    }
+
+    .dark .cell {
+        background: rgba(0,0,0,0.4);
+    }
+
+    .dark .cell:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    /* Winning effect */
+    .win {
+        background: #00ffcc !important;
+        animation: blink 0.6s infinite;
+    }
+
+    @keyframes blink {
+        50% { transform: scale(1.15); }
+    }
+
+    /* Buttons */
+    button {
+        padding: 10px 15px;
+        margin: 5px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        background: #ff7eb3;
+        color: white;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.1);
+        background: #ff4f81;
+    }
+
+</style>
+</head>
+
+<body class="light">
+
+<div class="container">
+    <h1>🎮 Tic Tac Toe</h1>
+
+    <button onclick="toggleTheme()">🌙 Toggle Theme</button>
+
+    <p id="status">Player X's Turn</p>
+
+    <div id="board"></div>
+
+    <button onclick="restartGame()">🔄 Restart</button>
+</div>
+
+<script>
+    const board = document.getElementById("board");
+    const statusText = document.getElementById("status");
+
+    let cells = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+    ];
+
+    function renderBoard() {
+        board.innerHTML = "";
+
+        cells.forEach((cell, index) => {
+            const div = document.createElement("div");
+            div.classList.add("cell");
+            div.innerText = cell;
+            div.dataset.index = index;
+
+            div.addEventListener("click", handleClick);
+
+            board.appendChild(div);
+        });
+    }
+
+    function handleClick(e) {
+        const index = e.target.dataset.index;
+
+        if (cells[index] !== "" || !gameActive) return;
+
+        cells[index] = currentPlayer;
+        e.target.innerText = currentPlayer;
+        e.target.style.animation = "fadeIn 0.3s";
+
+        checkGame();
+    }
+
+    function checkGame() {
+        let win = false;
+
+        for (let pattern of winPatterns) {
+            let [a,b,c] = pattern;
+
+            if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                highlightWin(pattern);
+                statusText.innerText = `🎉 Player ${currentPlayer} Wins!`;
+                gameActive = false;
+                win = true;
+                return;
+            }
+        }
+
+        if (!cells.includes("")) {
+            statusText.innerText = "😅 It's a Draw!";
+            gameActive = false;
+            return;
+        }
+
+        if (!win) {
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusText.innerText = `Player ${currentPlayer}'s Turn`;
+        }
+    }
+
+    function highlightWin(pattern) {
+        const allCells = document.querySelectorAll(".cell");
+
+        pattern.forEach(i => {
+            allCells[i].classList.add("win");
+        });
+    }
+
+    function restartGame() {
+        cells = ["", "", "", "", "", "", "", "", ""];
+        currentPlayer = "X";
+        gameActive = true;
+        statusText.innerText = "Player X's Turn";
+        renderBoard();
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark");
+        document.body.classList.toggle("light");
+    }
+
+    renderBoard();
+</script>
+
+</body>
+</html>
